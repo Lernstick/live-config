@@ -33,43 +33,23 @@ _RELEASE="$(lsb_release -cs | tr [A-Z] [a-z])"
 
 case "${_DISTRIBUTION}" in
 	debian)
-		NOSCRIPTS="apport ureadahead"
+		NOSCRIPTS="apport gdm ureadahead"
 
 		LIVE_HOSTNAME="debian"
 		LIVE_USERNAME="user"
 		LIVE_USER_FULLNAME="Debian Live user"
 		LIVE_USER_DEFAULT_GROUPS="audio cdrom dip floppy video plugdev netdev powerdev scanner bluetooth debian-tor"
 
-		case "${_RELEASE}" in
-			squeeze)
-				LIVE_USER_DEFAULT_GROUPS="audio cdrom dip floppy video plugdev netdev powerdev scanner bluetooth"
-				;;
-
-			*)
-				NOSCRIPTS="${NOSCRIPTS} gdm"
-				;;
-		esac
-
 		PROC_OPTIONS="onodev,noexec,nosuid"
 		;;
 
 	progress)
-		NOSCRIPTS="upstart apport ureadahead"
+		NOSCRIPTS="apport gdm upstart ureadahead"
 
 		LIVE_HOSTNAME="progress"
 		LIVE_USERNAME="user"
 		LIVE_USER_FULLNAME="Progress Linux user"
 		LIVE_USER_DEFAULT_GROUPS="audio cdrom dip floppy video plugdev netdev powerdev scanner bluetooth debian-tor sudo"
-
-		case "${_RELEASE}" in
-			artax|artax-backports)
-				LIVE_USER_DEFAULT_GROUPS="audio cdrom dip floppy video plugdev netdev powerdev scanner bluetooth sudo"
-				;;
-
-			*)
-				NOSCRIPTS="${NOSCRIPTS} gdm"
-				;;
-		esac
 
 		PROC_OPTIONS="onodev,noexec,nosuid,hidepid=2"
 		;;
