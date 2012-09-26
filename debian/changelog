@@ -1,3 +1,10 @@
+live-config (4.0~a1-1) experimental; urgency=low
+
+  * Dropping specifics for squeeze based distributions in live-config-
+    update.
+
+ -- Daniel Baumann <daniel@debian.org>  Wed, 26 Sep 2012 15:05:07 +0200
+
 live-config (3.0.6-1) unstable; urgency=low
 
   * Synchronise gdm and gdm3 scripts.
