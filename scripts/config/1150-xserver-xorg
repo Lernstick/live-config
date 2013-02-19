@@ -11,8 +11,7 @@
 Xserver_xorg ()
 {
 	# Checking if package is installed
-	if [ ! -e /var/lib/dpkg/info/xserver-xorg.list ] || \
-	   [ -e /var/lib/live/config/xserver-xorg ]
+	if [ ! -e /var/lib/dpkg/info/xserver-xorg.list ] ;
 	then
 		return
 	fi
@@ -211,6 +210,10 @@ EOF
 		esac
 	fi
 
+	# Remove leftovers from previous runs of this script, ensure that xorg autoconfig works and mesa is selected
+	rm /etc/X11/xorg.conf.d/zz-live-config_xserver-xorg.conf || true
+	update-alternatives --quiet --set glx /usr/lib/mesa-diverted
+
 	if [ -n "${LIVE_XORG_RESOLUTION}" ]
 	then
 		echo "xrandr -s ${LIVE_XORG_RESOLUTION} || /bin/true" >> /etc/X11/Xsession.d/21xvidemode
@@ -228,8 +231,6 @@ EOF
 			| grep -v "overwriting possibly-customised configuration" \
 			| grep -v "file; backup in /etc/X11/xorg.conf" || true
 
-		# Creating state file
-		touch /var/lib/live/config/xserver-xorg
 	fi
 }
 
