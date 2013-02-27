@@ -7,6 +7,90 @@
 ## This is free software, and you are welcome to redistribute it
 ## under certain conditions; see COPYING for details.
 
+Detect_xorg_driver ()
+{
+	# Side-effect: Sets _NVIDIA_VERSION and _NVIDIA_MODULE if an NVIDIA card is detected
+
+	# without lspci this won't work
+	if ! [ -x /usr/bin/lspci ]
+	then
+		echo "xorg-autoconfig"
+		return
+	fi
+
+	# Using anything other than native xorg drivers  has (so far) failed on all systems with several Display controllers.
+	# Therefore skip dirver selction if more than one Display controller is detected (last condition).
+	if [ $(lspci -mn | awk '{ gsub ("\"",""); { print $2 } }' | grep -c ^03) -ne 1 ]
+	then
+		echo "xorg-autoconfig"
+		return
+	fi
+
+	# pci-id of the first graphic card
+	_DEVICE="$(lspci -mn | awk '/0300/ { print $3$4 }' | sed -e 's|\"||g' | tr [a-z] [A-Z] | head -n1)"
+
+	# no PCI device found, hope the xorg autoconfiguration will figure it out
+	if [ -z "${_DEVICE}" ]
+	then
+		echo "xorg-autoconfig"
+		return
+	fi
+
+	# live-config specific xorg-driver overrides
+	if ls /usr/share/live/config/xserver-xorg/*.ids > /dev/null 2>&1
+	then
+		for _OVERRIDE_IDS in /usr/share/live/config/xserver-xorg/*.ids
+		do
+			if [ -e "${_OVERRIDE_IDS}" ]
+			then
+				if grep -qs "${_DEVICE}" "${_OVERRIDE_IDS}"
+				then
+					echo "$(basename ${_OVERRIDE_IDS} .ids)"
+					return
+				fi
+			fi
+		done
+	fi
+
+	# xorg-driver automatic override for virtualbox
+	if [ -e /var/lib/dpkg/info/virtualbox-guest-x11.list ] && echo "${_DEVICE}" | grep -qs '^80EEBEEF'
+	then
+		echo "vboxvideo"
+		return
+	fi
+
+	# xorg-driver automatic override for fglrx
+	if echo "${_DEVICE}" | grep -qs '^1002'
+	then
+		if grep -qs "${_DEVICE}" /usr/share/fglrx/fglrx.ids
+		then
+			echo "fglrx"
+			return
+		fi
+	fi
+
+	# xorg-driver automatic override for nvidia
+	if echo "${_DEVICE}" | grep -qs -E '^(10DE|12D2)'
+	then
+		for _NVIDIA_IDS in /usr/lib/nvidia/current/nvidia.ids $(ls /usr/lib/nvidia/legacy-*/nvidia.ids | sort -V -r)
+		do
+			if [ -e "${_NVIDIA_IDS}" ]
+			then
+				if grep -qs "${_DEVICE}" ${_NVIDIA_IDS}
+				then
+					_NVIDIA_VERSION="$(basename $(dirname ${_NVIDIA_IDS}))"
+					_NVIDIA_MODULE="$(echo nvidia-${_NVIDIA_VERSION} | sed -e 's|-current$||')"
+					echo "nvidia"
+					return
+				fi
+			fi
+		done
+
+	fi
+
+	# fall back to xorg autoconfiguration
+	echo "xorg-autoconfig"
+}
 
 Xserver_xorg ()
 {
@@ -89,85 +173,24 @@ Configure_xserver_xorg ()
 		esac
 	fi
 
-	if [ -z "${LIVE_XORG_DRIVER}" ] && [ -e /usr/bin/lspci ]
+	if [ -z "${LIVE_XORG_DRIVER}" ]
 	then
-		# pci-id of the first graphic card
-		_DEVICE="$(lspci -mn | awk '/0300/ { print $3$4 }' | sed -e 's|"||g' | tr [a-z] [A-Z] | head -n1)"
-
-		if [ -n "${_DEVICE}" ]
-		then
-			if ls /usr/share/live/config/xserver-xorg/*.ids > /dev/null 2>&1
-			then
-				# xorg-driver manual overrides
-				for _OVERRIDE_IDS in /usr/share/live/config/xserver-xorg/*.ids
-				do
-					if [ -e "${_OVERRIDE_IDS}" ]
-					then
-						if grep -qs "${_DEVICE}" "${_OVERRIDE_IDS}"
-						then
-							LIVE_XORG_DRIVER="$(basename ${_OVERRIDE_IDS} .ids)"
-
-							break
-						fi
-					fi
-				done
-			fi
-
-			if [ -z "${LIVE_XORG_DRIVER}" ]
-			then
-				# xorg-driver automatic override for virtualbox
-				if [ -e /var/lib/dpkg/info/virtualbox-guest-x11.list ] && echo "${_DEVICE}" | grep -qs '^80EEBEEF'
-				then
-					LIVE_XORG_DRIVER="vboxvideo"
-				fi
-
-				# xorg-driver automatic override for fglrx
-				if echo "${_DEVICE}" | grep -qs '^1002'
-				then
-					if grep -qs "${_DEVICE}" /usr/share/fglrx/fglrx.ids
-					then
-						LIVE_XORG_DRIVER="fglrx"
-					fi
-				fi
-
-				# xorg-driver automatic override for nvidia
-				if echo "${_DEVICE}" | grep -qs -E '^(10DE|12D2)'
-				then
-					for _NVIDIA_IDS in /usr/lib/nvidia/current/nvidia.ids $(ls /usr/lib/nvidia/legacy-*/nvidia.ids | sort -V -r)
-					do
-						if [ -e "${_NVIDIA_IDS}" ]
-						then
-							if grep -qs "${_DEVICE}" ${_NVIDIA_IDS}
-							then
-								_NVIDIA_VERSION="$(basename $(dirname ${_NVIDIA_IDS}))"
-								_NVIDIA_MODULE="$(echo nvidia-${_NVIDIA_VERSION} | sed -e 's|-current$||')"
-
-								break
-							fi
-						fi
-					done
-
-					if [ -n "${_NVIDIA_VERSION}" ]
-					then
-						LIVE_XORG_DRIVER="nvidia"
-					fi
-				fi
-			fi
-		fi
+		LIVE_XORG_DRIVER=$(Detect_xorg_driver)
 	fi
 
-	if [ -n "${LIVE_XORG_DRIVER}" ]
+	mkdir -p /etc/X11/xorg.conf.d
+
+	# Create xorg config file snippet
+	if [ -e "/usr/share/live/config/xserver-xorg/${LIVE_XORG_DRIVER}.conf" ]
 	then
-		mkdir -p /etc/X11/xorg.conf.d
-
-		if [ -e "/usr/share/live/config/xserver-xorg/${LIVE_XORG_DRIVER}.conf" ]
-		then
-			# xorg-driver manual override
-			cp "/usr/share/live/config/xserver-xorg/${LIVE_XORG_DRIVER}.conf" /etc/X11/xorg.conf.d/zz-live-config_xserver-xorg.conf
-		else
-
-			# xorg-driver automatic override
-
+		# xorg-driver manual override
+		cp "/usr/share/live/config/xserver-xorg/${LIVE_XORG_DRIVER}.conf" /etc/X11/xorg.conf.d/zz-live-config_xserver-xorg.conf
+	elif [ ${LIVE_XORG_DRIVER} = "xorg-autoconfig" ]
+	then
+		# Remove leftovers from previous runs of this script, ensure that xorg autoconfig works
+		[ -e /etc/X11/xorg.conf.d/zz-live-config_xserver-xorg.conf ] && rm /etc/X11/xorg.conf.d/zz-live-config_xserver-xorg.conf
+	else
+		# xorg-driver automatic override
 cat > /etc/X11/xorg.conf.d/zz-live-config_xserver-xorg.conf << EOF
 Section "Device"
 	Identifier	"Default screen"
@@ -175,23 +198,20 @@ Section "Device"
 EndSection
 EOF
 
-		fi
+	fi
 
+	# set correct glx alternative
+	if [ -e /etc/alternatives/glx ]
+	then
 		case "${LIVE_XORG_DRIVER}" in
 			fglrx)
-				if [ -e /etc/alternatives/glx ]
-				then
-					update-alternatives --quiet --set glx /usr/lib/fglrx
-				fi
+				update-alternatives --quiet --set glx /usr/lib/fglrx
 
 				modprobe fglrx
 				;;
 
 			nvidia)
-				if [ -e /etc/alternatives/glx ]
-				then
-					update-alternatives --quiet --set glx /usr/lib/nvidia
-				fi
+				update-alternatives --quiet --set glx /usr/lib/nvidia
 
 				if [ -e /etc/alternatives/nvidia ]
 				then
@@ -202,17 +222,10 @@ EOF
 				;;
 
 			*)
-				if [ -e /etc/alternatives/glx ]
-				then
-					update-alternatives --quiet --set glx /usr/lib/mesa-diverted
-				fi
+				update-alternatives --quiet --set glx /usr/lib/mesa-diverted
 				;;
 		esac
 	fi
-
-	# Remove leftovers from previous runs of this script, ensure that xorg autoconfig works and mesa is selected
-	rm /etc/X11/xorg.conf.d/zz-live-config_xserver-xorg.conf || true
-	update-alternatives --quiet --set glx /usr/lib/mesa-diverted
 
 	if [ -n "${LIVE_XORG_RESOLUTION}" ]
 	then
