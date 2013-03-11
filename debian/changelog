@@ -1,9 +1,15 @@
-live-config (3.0.21-1+lernstick1) UNRELEASED; urgency=low
+live-config (3.0.21-1+lernstick2) lernstick; urgency=low
+
+  * [b967] Fix NVIDIA legacy driver configuration
+
+ -- Gaudenz Steinlin <gaudenz@debian.org>  Mon, 11 Mar 2013 16:07:32 +0100
+
+live-config (3.0.21-1+lernstick1) lernstick; urgency=low
 
   * Always configure X server
   * Move xorg driver detection into subfunction
 
- -- Gaudenz Steinlin <gaudenz@debian.org>  Wed, 27 Feb 2013 11:42:05 +0100
+ -- Gaudenz Steinlin <gaudenz@debian.org>  Mon, 11 Mar 2013 16:07:10 +0100
 
 live-config (3.0.21-1) unstable; urgency=low
 
