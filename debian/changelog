@@ -1,3 +1,9 @@
+live-config (3.0.21-1+lernstick3) lernstick; urgency=low
+
+  * [5f25] Fix NVIDIA legacy driver configuration
+
+ -- Gaudenz Steinlin <gaudenz@soziologie.ch>  Wed, 13 Mar 2013 16:07:22 +0100
+
 live-config (3.0.21-1+lernstick2) lernstick; urgency=low
 
   * [b967] Fix NVIDIA legacy driver configuration
