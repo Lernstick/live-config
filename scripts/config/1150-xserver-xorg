@@ -90,6 +90,23 @@ Detect_xorg_driver ()
 	echo "xorg-autoconfig"
 }
 
+Enable_update_initramfs ()
+{
+	chmod +x /usr/sbin/update-initramfs
+}
+
+Reconfigure_glx_alternative_nvidia ()
+{
+	# avoid updating the the initramfs as it takes way too long and is
+	# useless on live systems (we might be on completely different hardware
+	# on next boot)
+	trap Enable_update_initramfs 0
+	chmod -x /usr/sbin/update-initramfs
+	dpkg-reconfigure glx-alternative-nvidia
+	Enable_update_initramfs
+	trap - 0
+}
+
 Xserver_xorg ()
 {
 	# Checking if package is installed
@@ -217,15 +234,17 @@ EOF
 				;;
 
 			nvidia-*)
+				update-alternatives --quiet --set glx /usr/lib/nvidia
+
 				_NVIDIA_VERSION="$(echo ${LIVE_XORG_DRIVER} | cut -f 2- -d '-')"
 				_NVIDIA_MODULE="$(echo nvidia-${_NVIDIA_VERSION} | sed -e 's|-current$||')"
 				if [ -e /etc/alternatives/nvidia ]
 				then
 					update-alternatives --quiet --set nvidia /usr/lib/nvidia/${_NVIDIA_VERSION:-current}
 				fi
-				# configure the GLX alternative after the nvidia one,
+				# reconfigure the GLX alternative package
 				# see http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=702782
-				update-alternatives --quiet --set glx /usr/lib/nvidia
+				Reconfigure_glx_alternative_nvidia
 
 				modprobe --ignore-install ${_NVIDIA_MODULE:-nvidia}
 				;;
