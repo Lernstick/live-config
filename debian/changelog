@@ -1,3 +1,9 @@
+live-config (3.0.21-1+lernstick4) lernstick; urgency=low
+
+  * [41a6] Adapt names for Nvidia config files
+
+ -- Gaudenz Steinlin <gaudenz@debian.org>  Tue, 26 Mar 2013 09:31:18 +0100
+
 live-config (3.0.21-1+lernstick3) lernstick; urgency=low
 
   * [5f25] Fix NVIDIA legacy driver configuration
