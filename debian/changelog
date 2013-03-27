@@ -1,8 +1,9 @@
 live-config (3.0.21-1+lernstick4) lernstick; urgency=low
 
+  * [a888] Change nvidia-legacy-173xx.conf from symlink to file
   * [41a6] Adapt names for Nvidia config files
 
- -- Gaudenz Steinlin <gaudenz@debian.org>  Tue, 26 Mar 2013 09:31:18 +0100
+ -- Gaudenz Steinlin <gaudenz@debian.org>  Wed, 27 Mar 2013 23:35:09 +0100
 
 live-config (3.0.21-1+lernstick3) lernstick; urgency=low
 
