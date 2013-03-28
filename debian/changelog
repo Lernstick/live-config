@@ -1,3 +1,9 @@
+live-config (3.0.21-1+lernstick6) lernstick; urgency=low
+
+  * added EFI blacklist
+
+ -- Ronny Standtke <ronny.standtke@fhnw.ch>  Thu, 28 Mar 2013 15:13:24 +0100
+
 live-config (3.0.21-1+lernstick5) lernstick; urgency=low
 
   * don't fallback to xorg when several display controllers with the same

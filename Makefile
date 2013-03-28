@@ -92,6 +92,10 @@ install:
 		done; \
 	done
 
+	# Installing blacklist
+	mkdir -p $(DESTDIR)/usr/lib/
+	cp efi_blacklist $(DESTDIR)/usr/lib/
+
 uninstall:
 	# Uninstalling backends
 	rm -f $(DESTDIR)/etc/init.d/live

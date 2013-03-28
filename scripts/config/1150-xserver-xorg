@@ -29,6 +29,16 @@ Detect_xorg_driver ()
 	# pci-id of the first graphic card
 	_DEVICE="$(lspci -mn | awk '/0300/ { print $3$4 }' | sed -e 's|\"||g' | tr [a-z] [A-Z] | head -n1)"
 
+	# There are some drivers that do not work with EFI boot
+	if grep -q lernstick_efi_boot /proc/cmdline
+	then
+		if grep -q ${_DEVICE} /usr/lib/efi_blacklist
+		then
+			echo "xorg-autoconfig"
+			return
+		fi
+	fi
+
 	# no PCI device found, hope the xorg autoconfiguration will figure it out
 	if [ -z "${_DEVICE}" ]
 	then
