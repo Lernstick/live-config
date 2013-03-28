@@ -18,9 +18,9 @@ Detect_xorg_driver ()
 		return
 	fi
 
-	# Using anything other than native xorg drivers  has (so far) failed on all systems with several Display controllers.
-	# Therefore skip dirver selction if more than one Display controller is detected (last condition).
-	if [ $(lspci -mn | awk '{ gsub ("\"",""); { print $2 } }' | grep -c ^03) -ne 1 ]
+	# Using anything other than native xorg drivers  has (so far) failed on all systems with several different display controllers.
+	# Therefore skip driver selction if more than one display controller is detected (last condition).
+	if [ $(lspci -mn | awk '{ gsub ("\"",""); { print $2$3$4 } }' | grep ^03 | awk '{ print substr($1,5,8) }' | uniq | wc -l) -ne 1 ]
 	then
 		echo "xorg-autoconfig"
 		return

@@ -1,3 +1,10 @@
+live-config (3.0.21-1+lernstick5) lernstick; urgency=low
+
+  * don't fallback to xorg when several display controllers with the same
+    PCI ID are detected (veryfied with NVIDIA GPU)
+
+ -- Ronny Standtke <ronny.standtke@fhnw.ch>  Thu, 28 Mar 2013 14:46:20 +0100
+
 live-config (3.0.21-1+lernstick4) lernstick; urgency=low
 
   * [a888] Change nvidia-legacy-173xx.conf from symlink to file
