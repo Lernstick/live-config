@@ -252,7 +252,7 @@ EOF
 				# check if the alternative is present and if it needs to be updated
 				# updating takes a bit of time because the glx-alternative-nvidia package
 				# needs to be reconfigured and calls ldconfig in it's postinst.
-				if [ -e /etc/alternatives/nvidia -a "$(update-alternatives --query nvidia | grep -E '^Value: ' | cut -f 2 -d ' ')" != "${_NVIDIA_ALTERNATIVE}"]
+				if [ -e /etc/alternatives/nvidia -a "$(update-alternatives --query nvidia | grep -E '^Value: ' | cut -f 2 -d ' ')" != "${_NVIDIA_ALTERNATIVE}" ]
 				then
 					update-alternatives --quiet --set nvidia ${_NVIDIA_ALTERNATIVE}
 					# reconfigure the GLX alternative package
