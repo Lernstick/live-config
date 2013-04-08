@@ -1,3 +1,10 @@
+live-config (3.0.22-1+lernstick1) lernstick; urgency=low
+
+  * Avoid unnecessary reconfigureing glx-alternative-nvidia
+  * Sync with Debian
+
+ -- Gaudenz Steinlin <gaudenz@debian.org>  Mon, 08 Apr 2013 16:34:18 +0200
+
 live-config (3.0.22-1) unstable; urgency=low
 
   [ Daniel Baumann ]
