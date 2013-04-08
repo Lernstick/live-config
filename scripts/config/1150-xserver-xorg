@@ -238,13 +238,17 @@ EOF
 
 				_NVIDIA_VERSION="$(echo ${LIVE_XORG_DRIVER} | cut -f 2- -d '-')"
 				_NVIDIA_MODULE="$(echo nvidia-${_NVIDIA_VERSION} | sed -e 's|-current$||')"
-				if [ -e /etc/alternatives/nvidia ]
+				_NVIDIA_ALTERNATIVE="/usr/lib/nvidia/${_NVIDIA_VERSION:-current}"
+				# check if the alternative is present and if it needs to be updated
+				# updating takes a bit of time because the glx-alternative-nvidia package
+				# needs to be reconfigured and calls ldconfig in it's postinst.
+				if [ -e /etc/alternatives/nvidia -a "$(update-alternatives --query nvidia | grep -E '^Value: ' | cut -f 2 -d ' ')" != "${_NVIDIA_ALTERNATIVE}" ]
 				then
-					update-alternatives --quiet --set nvidia /usr/lib/nvidia/${_NVIDIA_VERSION:-current}
+					update-alternatives --quiet --set nvidia ${_NVIDIA_ALTERNATIVE}
+					# reconfigure the GLX alternative package
+					# see http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=702782
+					Reconfigure_glx_alternative_nvidia
 				fi
-				# reconfigure the GLX alternative package
-				# see http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=702782
-				Reconfigure_glx_alternative_nvidia
 
 				modprobe --ignore-install ${_NVIDIA_MODULE:-nvidia} || true
 				;;
