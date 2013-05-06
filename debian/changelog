@@ -1,3 +1,9 @@
+live-config (3.0.23-1+lernstick1) lernstick; urgency=low
+
+  * Sync with Debian
+
+ -- Gaudenz Steinlin <gaudenz@debian.org>  Mon, 06 May 2013 09:37:48 +0200
+
 live-config (3.0.23-1) unstable; urgency=low
 
   * Loading fglrx module with --ignore-install like the nvidia ones too.
