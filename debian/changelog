@@ -1,3 +1,10 @@
+live-config (3.0.23-1+lernstick3) lernstick; urgency=low
+
+  * made cd persistency script executable
+  * added xorg config for nvidia-legacy-96xx
+
+ -- Ronny Standtke <ronny.standtke@fhnw.ch>  Wed, 22 May 2013 18:00:21 +0200
+
 live-config (3.0.23-1+lernstick2) lernstick; urgency=low
 
   * Remove persistent CD device udev rules
