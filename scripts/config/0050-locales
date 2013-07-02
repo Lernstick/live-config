@@ -10,13 +10,6 @@
 
 Locales ()
 {
-	# Checking if package is installed or already configured
-	if [ ! -e /var/lib/dpkg/info/locales.list ] || \
-	   [ -e /var/lib/live/config/locales ]
-	then
-		return
-	fi
-
 	echo -n " locales"
 
 	# Reading kernel command line
@@ -46,6 +39,7 @@ Configure_locales ()
 	fi
 
 	echo "LANG=${_LOCALE}" > /etc/default/locale
+	echo "LANGUAGE=${_LOCALE}" >> /etc/default/locale
 
 	if [ -e /etc/locale.gen ]
 	then
