@@ -185,7 +185,7 @@ uninstall:
 	rmdir --ignore-fail-on-non-empty $(DESTDIR) > /dev/null 2>&1 || true
 
 clean:
-	rm -r mo
+	rm -r mo > /dev/null 2>&1 || true
 
 distclean: clean
 
