@@ -24,7 +24,7 @@ fi
 
 
 
-# Try to cache everything we're likely to need after ejecting.  This
+# Try to cache everything we're likely to need after ejecting. This
 # is fragile and simple-minded, but our options are limited.
 cache_path()
 {
@@ -79,11 +79,9 @@ get_boot_device()
 
 device_is_USB_flash_drive()
 {
-	# remove leading "/dev/" and all trailing numbers from input
-	DEVICE=$(expr substr ${1} 6 3)
-
-	# check that device starts with "sd"
-	[ "$(expr substr ${DEVICE} 1 2)" != "sd" ] && return 1
+	# get unpartitioned device name by extracting all alphanumerical 
+	# characters from the start of the string
+	DEVICE=$(expr match ${1} "\([[:alpha:]]*\)")
 
 	# check that the device is an USB device
 	if readlink /sys/block/${DEVICE} | grep -q usb
@@ -96,52 +94,119 @@ device_is_USB_flash_drive()
 
 Eject ()
 {
-	# TODO: i18n
-	BOOT_DEVICE="$(get_boot_device)"
-
-	if device_is_USB_flash_drive ${BOOT_DEVICE}
+	BOOT_DEVICE="$(basename $(get_boot_device))"
+	if grep -qs "eject_request" /sys/block/${BOOT_DEVICE}/events
 	then
-		# do NOT eject USB flash drives!
-		# otherwise rebooting with most USB flash drives
-		# failes because they actually remember the
-		# "ejected" state even after reboot
-		MESSAGE="Please remove the USB flash drive"
-
-		case "${NOPROMPT}" in
-			usb)
-				prompt=
-				;;
-		esac
-	else
+		# device is ejectable, USB flash drives don't support eject_request events
 		# ejecting is a very good idea here
-		MESSAGE="Please remove the disc, close the tray (if any)"
+		MESSAGE="$(gettext "Please remove the disc, close the tray (if any) and")"
 
 		if [ -x /usr/bin/eject ]
 		then
-			eject -p -m /lib/live/mount/medium >/dev/null 2>&1
+			# dialog (below) needs a working system, therefore we
+			# wait for a second before calling eject. Caching is not
+			# enough as dialog creates sockets and pipes.
+			(sleep 1; eject -p -m /lib/live/mount/medium >/dev/null 2>&1) &
 		fi
 
-		case "${NOPROMPT}" in
-			cd)
-				prompt=
-				;;
-		esac
+		if [ "${NOPROMPT}" = "cd" ]
+		then
+			prompt=
+		fi
+	elif device_is_USB_flash_drive ${BOOT_DEVICE}
+	then
+		# do NOT eject USB flash drives!
+		# otherwise rebooting with most USB flash drives
+		# fails because they actually remember the
+		# "ejected" state even after reboot
+		MESSAGE="$(gettext "Please remove the USB flash drive and")"
+
+		if [ "${NOPROMPT}" = "usb" ]
+		then
+			prompt=
+		fi
+	
+	else
+		# device is NOT removable, probably an internal hard drive
+		# there is no need to wait or show any dialog here
+		return 0
 	fi
 
 	[ "$prompt" ] || return 0
 
-	if [ -x /bin/plymouth ] && plymouth --ping
+	# determine current action (do we shutdown or reboot?)
+	# this info is used later for the messages prompted to the user
+	if [ "${RUNLEVEL}" = "0" ]
 	then
-		plymouth message --text="${MESSAGE} and press ENTER to continue:"
-		plymouth watch-keystroke > /dev/null
+		TITLE="$(gettext "Shutdown")"
+		OK_LABEL="$(gettext "Shut Down")"
+		### TRANSLATORS: these are the shutdown ${INFINITIVE} and ${FUTURE} used later 
+		### Plural[0]=Infinitive I, Plural[1]=Futur I
+		INFINITIVE="$(ngettext "shut down" "shut down" 1)"
+		FUTURE="$(ngettext "shut down" "shut down" 2)"
+	elif [ "${RUNLEVEL}" = "6" ]
+	then
+		TITLE="$(gettext "Reboot")"
+		OK_LABEL="$(gettext "Reboot")"
+		### TRANSLATORS: this is the reboot ${INFINITIVE} used later 
+		INFINITIVE="$(gettext "reboot")"
+		### TRANSLATORS: this is the reboot ${FUTURE} used later 
+		FUTURE="$(gettext "rebooted")"
 	else
+		log_warning_msg "Unsupported runlevel!"
+	fi
+	PRESS_ENTER="$(eval_gettext "press ENTER to \${INFINITIVE} the system")"
+	
+#	if [ -x /bin/plymouth ] && plymouth --ping
+#	then
+#		plymouth message --text="${MESSAGE} ${PRESS_ENTER}."
+#		plymouth watch-keystroke > /dev/null
+#	elif [ -x /usr/bin/dialog ]
+        if [ -x /usr/bin/dialog ]
+	then
+		# show message via dialog
+		MESSAGE="$(eval_gettext "\${MESSAGE} \${PRESS_ENTER}.\n\n(If you do nothing, the system will be automatically \${FUTURE} when the timer runs out.)")"
+		# gdm messes with the virtual terminals
+		# therefore we have to enforce the usage of vt1 here with chvt and openvt
+		if [ -x /bin/chvt -a -x /bin/openvt ]
+		then
+			chvt 1
+			openvt -c 1 -f -w -- dialog --nocancel --backtitle "${TITLE}" --ok-label "${OK_LABEL}" --pause "${MESSAGE}" 16 45 15
+		else
+			dialog --nocancel --backtitle "${TITLE}" --ok-label "${OK_LABEL}" --pause "${MESSAGE}" 16 45 15
+		fi
+	else
+		# show message via console
 		stty sane < /dev/console
-
-		printf "\n\n${MESSAGE} and press ENTER to continue:" > /dev/console
-
+		printf "\n\n${MESSAGE}\n${PRESS_ENTER}:" > /dev/console
 		read x < /dev/console
 	fi
 }
+
+# Hey! Who the hell took away our locale settings?
+# Let's get it back now...
+if [ -f /etc/default/locale ]
+then
+	. /etc/default/locale
+	export LC_ALL=${LANG}
+fi
+
+# gettext support
+. /etc/default/locale
+
+if [ -r /usr/bin/gettext.sh ]
+then
+	. gettext.sh
+else
+	gettext () {
+		echo "$1"
+	}
+	eval_gettext () {
+		eval "echo $1"
+	}
+fi
+
+export TEXTDOMAIN=live-boot
 
 echo "live-boot: caching reboot files..."
 

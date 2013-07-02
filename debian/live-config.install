@@ -1,4 +1,5 @@
 sbin
 lib/live
 usr/share/live
+usr/share/locales
 var

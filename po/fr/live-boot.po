@@ -1,0 +1,69 @@
+# translations for live-boot
+# Copyright (C) 2009 Ronny Standtke
+# This file is distributed under the same license as the live-boot package.
+# Ronny Standtke <Ronny.Standtke@fhnw.ch>, 2009.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-11-02 13:29+0100\n"
+"PO-Revision-Date: 2009-04-28 17:34+0000\n"
+"Last-Translator: Ronny Standtke <Ronny.Standtke@fhnw.ch>\n"
+"Language-Team: DE <de@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: lib/live/boot-init.sh:101
+msgid "Please remove the disc, close the tray (if any) and"
+msgstr "Enlevez le disque s.v.p., fermez (si necessaire) le baie de lecteur et"
+
+#: lib/live/boot-init.sh:121
+msgid "Please remove the USB flash drive and"
+msgstr "Enlevez la cle USB s.v.p et"
+
+#: lib/live/boot-init.sh:140
+msgid "Shutdown"
+msgstr "Eteindre"
+
+#: lib/live/boot-init.sh:141
+msgid "Shut Down"
+msgstr "Eteindre"
+
+#. ## TRANSLATORS: these are the shutdown ${INFINITIVE} and ${FUTURE} used later
+#. ## Plural[0]=Infinitive I, Plural[1]=Futur I
+#: lib/live/boot-init.sh:144 lib/live/boot-init.sh:145
+msgid "shut down"
+msgid_plural "shut down"
+msgstr[0] "eteindre"
+msgstr[1] "eteint"
+
+#: lib/live/boot-init.sh:148 lib/live/boot-init.sh:149
+msgid "Reboot"
+msgstr "Redemarrage"
+
+#. ## TRANSLATORS: this is the reboot ${INFINITIVE} used later
+#: lib/live/boot-init.sh:151
+msgid "reboot"
+msgstr "redemarrer"
+
+#. ## TRANSLATORS: this is the reboot ${FUTURE} used later
+#: lib/live/boot-init.sh:153
+msgid "rebooted"
+msgstr "redemarre"
+
+#: lib/live/boot-init.sh:157
+#, sh-format
+msgid "press ENTER to ${INFINITIVE} the system"
+msgstr "appuyez la touche ENTREE, pour ${INFINITIVE} le systeme"
+
+#: lib/live/boot-init.sh:167
+#, sh-format
+msgid ""
+"${MESSAGE} ${PRESS_ENTER}.\\n\\n(If you do nothing, the system will be "
+"automatically ${FUTURE} when the timer runs out.)"
+msgstr ""
+"${MESSAGE} ${PRESS_ENTER}.\\n\\n(Si vous ne faites rien, le systeme sera "
+"${FUTURE} automatiquement apres le delai d'attente.)"

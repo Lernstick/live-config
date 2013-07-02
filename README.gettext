@@ -1,0 +1,12 @@
+Initialization of a new language
+--------------------------------
+mkdir -p po/${LANG}
+cp po/live-boot.pot po/${LANG}/live-boot.po
+vi po/${LANG}/live-boot.po # erste Übersetzung
+
+Update of message template and merge to all languages
+-----------------------------------------------------
+
+xgettext -L Shell --add-comments=## -o po/live-boot.pot bin/boot-init.sh
+cd po; for i in *; do cd $i; msgmerge -U live-boot.po ../live-boot.pot ; cd ..; done; cd ..
+vi po/*/live-boot.po # Übersetzung aktualisieren
