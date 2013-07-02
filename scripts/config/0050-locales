@@ -39,6 +39,7 @@ Configure_locales ()
 	fi
 
 	echo "LANG=${_LOCALE}" > /etc/default/locale
+	echo "LANGUAGE=${_LOCALE}" >> /etc/default/locale
 
 	if [ -e /etc/locale.gen ]
 	then
