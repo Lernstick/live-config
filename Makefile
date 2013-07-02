@@ -12,7 +12,7 @@ SHELL := sh -e
 
 LANGUAGES = $(shell cd manpages/po && ls)
 
-INIT_LANGUAGES = $(shell cd po && ls)
+INIT_LANGUAGES = $(shell cd po && ls | grep -v live-boot.pot)
 
 SCRIPTS = backends/*/*.init bin/* scripts/*.sh scripts/*/*
 
