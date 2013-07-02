@@ -1,3 +1,17 @@
+live-config (3.0.23-1+lernstick4) lernstick; urgency=low
+
+  * [fbd0] Show flags in kxkb
+  * [c9d3] Don't disable "unnecessary" KDE services
+  * [a948] Always reconfigure locale
+  * [4ad7] Set LANGUAGE variable in /etc/default/locale
+  * [b537] Add gettext support for init script
+  * [4053] Don't fail on clean before build
+  * [5696] Make persistent cdrom removal script executable
+  * [56fc] Make persistent cdrom removal script executable
+  * [fb6f] Exclude live-boot.pot from init language list
+
+ -- Gaudenz Steinlin <gaudenz@debian.org>  Tue, 02 Jul 2013 11:40:15 +0200
+
 live-config (3.0.23-1+lernstick3) lernstick; urgency=low
 
   * made cd persistency script executable
