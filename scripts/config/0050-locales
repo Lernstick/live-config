@@ -10,13 +10,6 @@
 
 Locales ()
 {
-	# Checking if package is installed or already configured
-	if [ ! -e /var/lib/dpkg/info/locales.list ] || \
-	   [ -e /var/lib/live/config/locales ]
-	then
-		return
-	fi
-
 	echo -n " locales"
 
 	# Reading kernel command line
