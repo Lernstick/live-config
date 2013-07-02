@@ -12,6 +12,8 @@ SHELL := sh -e
 
 LANGUAGES = $(shell cd manpages/po && ls)
 
+INIT_LANGUAGES = $(shell cd po && ls)
+
 SCRIPTS = backends/*/*.init bin/* scripts/*.sh scripts/*/*
 
 all: build
@@ -45,7 +47,11 @@ test:
 	fi
 
 build:
-	@echo "Nothing to build."
+	for lang in $(INIT_LANGUAGES) ; \
+	 do \
+		mkdir -p mo/$${lang} ; \
+		msgfmt -o mo/$${lang}/live-boot.mo po/$${lang}/live-boot.po ; \
+	done
 
 install:
 	# Installing backends
@@ -95,6 +101,12 @@ install:
 	# Installing blacklist
 	mkdir -p $(DESTDIR)/usr/lib/
 	cp efi_blacklist $(DESTDIR)/usr/lib/
+
+	# Installing translations
+	for lang in $(INIT_LANGUAGES) ; \
+	do \
+		install -D -m 0644 mo/$${lang}/live-boot.mo $(DESTDIR)/usr/share/locales/$${lang}/LC_MESSAGES/live-boot.mo ; \
+	done
 
 uninstall:
 	# Uninstalling backends
@@ -156,15 +168,25 @@ uninstall:
 	done
 
 	rmdir --ignore-fail-on-non-empty $(DESTDIR)/usr/share/man > /dev/null 2>&1 || true
+
+	# Uninstalling translations
+	for lang in $(INIT_LANGUAGES) ; \
+	do \
+		rm $(DESTDIR)/usr/share/locales/$${lang}/LC_MESSAGES/live-boot.mo ; \
+		rmdir --ignore-fail-on-non-empty $(DESTDIR)/usr/share/locales/$${lang}/LC_MESSAGES > /dev/null 2>&1 || true ; \
+		rmdir --ignore-fail-on-non-empty $(DESTDIR)/usr/share/locales/$${lang} > /dev/null 2>&1 || true ; \
+	done
+
+	rmdir --ignore-fail-on-non-empty $(DESTDIR)/usr/share/locales > /dev/null 2>&1 || true
+
 	rmdir --ignore-fail-on-non-empty $(DESTDIR)/usr/share > /dev/null 2>&1 || true
 	rmdir --ignore-fail-on-non-empty $(DESTDIR)/usr > /dev/null 2>&1 || true
 
 	rmdir --ignore-fail-on-non-empty $(DESTDIR) > /dev/null 2>&1 || true
 
 clean:
-	@echo "Nothing to clean."
+	rm -r mo
 
 distclean: clean
-	@echo "Nothing to distclean."
 
 reinstall: uninstall install
