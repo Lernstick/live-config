@@ -19,6 +19,10 @@ override_dh_auto_install:
 	rm -f debian/tmp/usr/share/doc/live-config/COPYING
 	bin/live-config-update debian/tmp/lib/live/config
 
+	# make persistent cdrom removal script executable,
+	# permissions can not be represented in a diff
+	chmod +x debian/tmp/lib/live/config/0200-remove-persistent-cdrom
+
 override_dh_builddeb:
 	dh_builddeb -- -Zxz
 
