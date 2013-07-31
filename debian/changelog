@@ -1,3 +1,9 @@
+live-config (3.0.23-1+lernstick6) lernstick; urgency=low
+
+  * fixed path to locales in Makefile
+
+ -- Ronny Standtke <ronny.standtke@fhnw.ch>  Wed, 31 Jul 2013 16:59:33 +0200
+
 live-config (3.0.23-1+lernstick5) lernstick; urgency=low
 
   * [5536] Break and Replace lernstick-live-config-wheezy
