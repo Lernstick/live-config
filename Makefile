@@ -105,7 +105,7 @@ install:
 	# Installing translations
 	for lang in $(INIT_LANGUAGES) ; \
 	do \
-		install -D -m 0644 mo/$${lang}/live-boot.mo $(DESTDIR)/usr/share/locales/$${lang}/LC_MESSAGES/live-boot.mo ; \
+		install -D -m 0644 mo/$${lang}/live-boot.mo $(DESTDIR)/usr/share/locale/$${lang}/LC_MESSAGES/live-boot.mo ; \
 	done
 
 uninstall:
@@ -172,12 +172,12 @@ uninstall:
 	# Uninstalling translations
 	for lang in $(INIT_LANGUAGES) ; \
 	do \
-		rm $(DESTDIR)/usr/share/locales/$${lang}/LC_MESSAGES/live-boot.mo ; \
-		rmdir --ignore-fail-on-non-empty $(DESTDIR)/usr/share/locales/$${lang}/LC_MESSAGES > /dev/null 2>&1 || true ; \
-		rmdir --ignore-fail-on-non-empty $(DESTDIR)/usr/share/locales/$${lang} > /dev/null 2>&1 || true ; \
+		rm $(DESTDIR)/usr/share/locale/$${lang}/LC_MESSAGES/live-boot.mo ; \
+		rmdir --ignore-fail-on-non-empty $(DESTDIR)/usr/share/locale/$${lang}/LC_MESSAGES > /dev/null 2>&1 || true ; \
+		rmdir --ignore-fail-on-non-empty $(DESTDIR)/usr/share/locale/$${lang} > /dev/null 2>&1 || true ; \
 	done
 
-	rmdir --ignore-fail-on-non-empty $(DESTDIR)/usr/share/locales > /dev/null 2>&1 || true
+	rmdir --ignore-fail-on-non-empty $(DESTDIR)/usr/share/locale > /dev/null 2>&1 || true
 
 	rmdir --ignore-fail-on-non-empty $(DESTDIR)/usr/share > /dev/null 2>&1 || true
 	rmdir --ignore-fail-on-non-empty $(DESTDIR)/usr > /dev/null 2>&1 || true
