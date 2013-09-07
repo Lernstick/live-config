@@ -1,0 +1,7 @@
+#!/bin/sh
+
+if grep -q nottyautologin /proc/cmdline
+then
+	sed -i "s|^\([0-9][^:]*:[^:]*:[^:]*:\).*/bin/login.*\<\(tty[0-9]*\).*$|\1/sbin/getty 38400 \2|" /etc/inittab
+	init q
+fi

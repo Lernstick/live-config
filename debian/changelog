@@ -1,3 +1,9 @@
+live-config (3.0.23-1+lernstick7) lernstick; urgency=low
+
+  * fixed handling of nottyautologin with persistency
+
+ -- Ronny Standtke <ronny.standtke@fhnw.ch>  Sat, 07 Sep 2013 12:22:54 +0200
+
 live-config (3.0.23-1+lernstick6) lernstick; urgency=low
 
   * fixed path to locales in Makefile
