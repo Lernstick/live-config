@@ -246,7 +246,7 @@ EOF
 				then
 					update-alternatives --quiet --set nvidia ${_NVIDIA_ALTERNATIVE}
 					# reconfigure the GLX alternative package
-					# see http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=702782
+					# see /usr/share/doc/nvidia-driver/README.alternatives
 					Reconfigure_glx_alternative_nvidia
 				fi
 
