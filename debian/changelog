@@ -1,3 +1,9 @@
+live-config (3.0.23-1+lernstick8) lernstick; urgency=low
+
+  * use empty user password per default
+
+ -- Ronny Standtke <ronny.standtke@fhnw.ch>  Fri, 18 Oct 2013 11:15:19 +0200
+
 live-config (3.0.23-1+lernstick7) lernstick; urgency=low
 
   * fixed handling of nottyautologin with persistency
