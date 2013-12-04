@@ -1,3 +1,9 @@
+live-config (3.0.23-1+lernstick11) lernstick; urgency=low
+
+  * [4805] Remove card from MacBookPro5,3 from EFI blacklist
+
+ -- Gaudenz Steinlin <gaudenz@debian.org>  Wed, 04 Dec 2013 17:53:00 +0100
+
 live-config (3.0.23-1+lernstick10) lernstick; urgency=low
 
   * [07c0] Update comment after bug is closed
