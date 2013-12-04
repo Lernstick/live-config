@@ -1,4 +1,11 @@
-live-config (3.0.23-1+lernstick8) lernstick; urgency=low
+live-config (3.0.23-1+lernstick10) lernstick; urgency=low
+
+  * [07c0] Update comment after bug is closed
+  * [679c] Use normal detection logic for 2 NVIDIA cards
+
+ -- Gaudenz Steinlin <gaudenz@debian.org>  Wed, 04 Dec 2013 16:47:48 +0100
+
+live-config (3.0.23-1+lernstick9) lernstick; urgency=low
 
   * use empty user password per default
 
