@@ -1,0 +1,17 @@
+Here we document some special hardware settings we run into:
+
+MacBookPro5,3
+	- two NVIDIA GPUs:
+		- NVIDIA GeForce 9600M GT with 256 MB of dedicated GDDR3 SDRAM
+		- NVIDIA GeForce 9400M with 256 MB of DDR3 SDRAM shared with main memory
+	- hangs with the nouveau driver
+	- works with the proprietary NVIDIA driver
+	- verified: 2013-12-04
+
+
+MacBook6,1 (Model No: A1342)
+	- one NVIDIA GPU (GeForce 9400M)
+	- PCI-ID: 08A0
+	- UEFI-Boot with proprietary NVIDIA driver -> black display
+		- entry added to EFI blacklist
+	- verified: 2013-12-05
