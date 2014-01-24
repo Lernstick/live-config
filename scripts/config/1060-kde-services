@@ -10,14 +10,13 @@
 
 Kde_services ()
 {
-	# Checking if package is installed or already configured
-	if [ ! -e /usr/share/kde4 ] || \
-	   [ -e /var/lib/live/config/kde-services ]
+	echo -n " kde-services"
+
+	# Checking if package is installed
+	if [ ! -e /usr/share/kde4 ]
 	then
 		return
 	fi
-
-	echo -n " kde-services"
 
 	# Reading kernel command line
 	for _PARAMETER in ${_CMDLINE}
@@ -33,17 +32,19 @@ Kde_services ()
 		esac
 	done
 
-	Configure_kde_services
+	# enforce "lazy change" (only run the remaining script if the keyboard setting was really changed)
+	KEYBOARD_STATE_FILE="/var/lib/live/lernstick-config/kde-keyboard-fixup"
+	if [ ! -r ${KEYBOARD_STATE_FILE} ] || [ "${LIVE_KEYBOARD_LAYOUTS}" != "$(cat ${KEYBOARD_STATE_FILE})" ]
+	then
+		echo "${LIVE_KEYBOARD_LAYOUTS}" > $KEYBOARD_STATE_FILE
+		Configure_kde_services
+	fi
 }
 
 Configure_kde_services ()
 {
-	# Enabling keyboard selector
-	if echo "${LIVE_KEYBOARD_LAYOUTS}" | grep -qs ','
-	then
-		if [ ! -e "/home/${LIVE_USERNAME}/.kde/share/config/kxkbrc" ]
-		then
-			mkdir -p "/home/${LIVE_USERNAME}/.kde/share/config/"
+	# update layouts in keyboard selector
+	mkdir -p "/home/${LIVE_USERNAME}/.kde/share/config/"
 
 cat > "/home/${LIVE_USERNAME}/.kde/share/config/kxkbrc" << EOF
 [Layout]
@@ -55,15 +56,10 @@ SwitchMode=Global
 Use=true
 EOF
 
-			chown ${LIVE_USERNAME}:${LIVE_USERNAME} "/home/${LIVE_USERNAME}/.kde" -R
-		fi
-	fi
-
+	chown ${LIVE_USERNAME}:${LIVE_USERNAME} "/home/${LIVE_USERNAME}/.kde/share/config/kxkbrc" 
+	rm -f "/home/${LIVE_USERNAME}/.kde/share/apps/kded/session/keyboard/layout_memory.xml"
 	# should enable kxkb in ~/.kde/share/config/kxkbrc
 	# if multiple layouts are specified. gnome does it per default.
-
-	# Creating state file
-	touch /var/lib/live/config/kde-services
 }
 
 Kde_services

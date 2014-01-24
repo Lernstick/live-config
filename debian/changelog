@@ -1,3 +1,9 @@
+live-config (3.0.23-1+lernstick12) lernstick; urgency=low
+
+  * support lazy change of keyboard layout
+
+ -- Ronny Standtke <ronny.standtke@fhnw.ch>  Fri, 24 Jan 2014 11:13:49 +0100
+
 live-config (3.0.23-1+lernstick11) lernstick; urgency=low
 
   * [4805] Remove card from MacBookPro5,3 from EFI blacklist

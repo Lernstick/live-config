@@ -10,13 +10,6 @@
 
 Keyboard_configuration ()
 {
-	# Checking if package is installed or already configured
-	if [ ! -e /var/lib/dpkg/info/keyboard-configuration.list ] || \
-	   [ -e /var/lib/live/config/keyboard-configuration ]
-	then
-		return
-	fi
-
 	echo -n " keyboard-configuration"
 
 	# Reading kernel command line
@@ -41,7 +34,13 @@ Keyboard_configuration ()
 		esac
 	done
 
-	Configure_keyboard_configuration
+	# enforce "lazy change" (only run the remaining script if the keyboard setting was really changed)
+	KEYBOARD_STATE_FILE="/var/lib/live/lernstick-config/keyboard-fixup"
+	if [ ! -r ${KEYBOARD_STATE_FILE} ] || [ "${LIVE_KEYBOARD_LAYOUTS}" != "$(cat ${KEYBOARD_STATE_FILE})" ]
+	then
+		echo "${LIVE_KEYBOARD_LAYOUTS}" > $KEYBOARD_STATE_FILE
+		Configure_keyboard_configuration
+	fi
 }
 
 Configure_keyboard_configuration ()
@@ -78,9 +77,6 @@ Configure_keyboard_configuration ()
 	then
 		debconf-set-selections < /tmp/debconf.live
 		rm -f /tmp/debconf.live
-
-		# Creating state file
-		touch /var/lib/live/config/keyboard-configuration
 	fi
 }
 
