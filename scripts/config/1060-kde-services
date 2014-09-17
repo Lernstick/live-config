@@ -7,59 +7,50 @@
 ## This is free software, and you are welcome to redistribute it
 ## under certain conditions; see COPYING for details.
 
+KEYBOARD_STATE_FILE="/var/lib/live/lernstick-config/kde-keyboard-fixup"
+KXKBRC="/home/${LIVE_USERNAME}/.kde/share/config/kxkbrc"
 
-Kde_services ()
+Kde_keyboard ()
 {
-	echo -n " kde-services"
+	echo -n " kde-keyboard-configuration"
 
-	# Checking if package is installed
-	if [ ! -e /usr/share/kde4 ]
-	then
-		return
-	fi
+	# Checking if KDE is installed
+	[ -e /usr/share/kde4 ] || return 0
 
-	# Reading kernel command line
-	for _PARAMETER in ${_CMDLINE}
-	do
-		case "${_PARAMETER}" in
-			live-config.keyboard-layouts=*|keyboard-layouts=*)
-				LIVE_KEYBOARD_LAYOUTS="${_PARAMETER#*keyboard-layouts=}"
-				;;
+	[ "${KEYBOARD_CHANGED}" = "true" ] || return 0
 
-			live-config.username=*|username=*)
-				LIVE_USERNAME="${_PARAMETER#*username=}"
-				;;
-		esac
-	done
-
-	# enforce "lazy change" (only run the remaining script if the keyboard setting was really changed)
-	KEYBOARD_STATE_FILE="/var/lib/live/lernstick-config/kde-keyboard-fixup"
-	if [ ! -r ${KEYBOARD_STATE_FILE} ] || [ "${LIVE_KEYBOARD_LAYOUTS}" != "$(cat ${KEYBOARD_STATE_FILE})" ]
-	then
-		echo "${LIVE_KEYBOARD_LAYOUTS}" > $KEYBOARD_STATE_FILE
-		Configure_kde_services
-	fi
+	Configure_kde_keyboard
 }
 
-Configure_kde_services ()
+Configure_kde_keyboard ()
 {
 	# update layouts in keyboard selector
-	mkdir -p "/home/${LIVE_USERNAME}/.kde/share/config/"
+	dir="$(dirname $KXKBRC)"
+	[ -d "${dir}" ] || mkdir -p "${dir}"
 
-cat > "/home/${LIVE_USERNAME}/.kde/share/config/kxkbrc" << EOF
+	if [ ! -e "${KXKBRC}" ]
+	then
+cat > "${KXKBRC}" << EOF
 [Layout]
 DisplayNames=${LIVE_KEYBOARD_LAYOUTS}
 IndicatorOnly=false
 LayoutList=${LIVE_KEYBOARD_LAYOUTS}
+Model=${LIVE_KEYBOARD_MODEL}
 ShowFlag=true
 SwitchMode=Global
 Use=true
 EOF
+	else
+		sed --in-place --expression="s/DisplayNames=.*/DisplayNames=${LIVE_KEYBOARD_LAYOUTS}/" \
+		    --expression="s/LayoutList=.*/LayoutList=${LIVE_KEYBOARD_LAYOUTS}/" \
+		    --expression="s/Model=.*/Model=${LIVE_KEYBOARD_MODEL}/" \
+		    "${KXKBRC}"
+	fi
 
-	chown ${LIVE_USERNAME}:${LIVE_USERNAME} "/home/${LIVE_USERNAME}/.kde/share/config/kxkbrc" 
+	chown ${LIVE_USERNAME}:${LIVE_USERNAME} "${KXKBRC}"
 	rm -f "/home/${LIVE_USERNAME}/.kde/share/apps/kded/session/keyboard/layout_memory.xml"
 	# should enable kxkb in ~/.kde/share/config/kxkbrc
 	# if multiple layouts are specified. gnome does it per default.
 }
 
-Kde_services
+Kde_keyboard
