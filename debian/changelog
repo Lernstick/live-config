@@ -1,3 +1,13 @@
+live-config (3.0.23-1+lernstick13) lernstick; urgency=low
+
+  [ Gaudenz Steinlin ]
+  * Autodetect keyboard model
+
+  [ Ronny Standtke ]
+  * updated efi blacklist
+
+ -- Gaudenz Steinlin <gaudenz@debian.org>  Thu, 15 Jan 2015 14:51:49 +0100
+
 live-config (3.0.23-1+lernstick12) lernstick; urgency=low
 
   * support lazy change of keyboard layout
