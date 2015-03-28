@@ -49,8 +49,7 @@ Cmdline ()
 Init ()
 {
 	# Checking if package is installed
-	if [ ! -e /var/lib/dpkg/info/xserver-xorg.list ] || \
-	   [ -e /var/lib/live/config/xserver-xorg ]
+	if [ ! -e /var/lib/dpkg/info/xserver-xorg.list ]
 	then
 		exit 0
 	fi
@@ -218,8 +217,6 @@ EOF
 			| grep -v "overwriting possibly-customised configuration" \
 			| grep -v "file; backup in /etc/X11/xorg.conf" || true
 
-		# Creating state file
-		touch /var/lib/live/config/xserver-xorg
 	fi
 }
 
