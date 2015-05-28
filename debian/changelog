@@ -1,3 +1,14 @@
+live-config (5.0~a3-1+lernstick1) lernstick-8; urgency=medium
+
+  [ Gaudenz Steinlin ]
+  * [39321e] Always configure X server
+  * [bceb06] Use xorg driver for multiple display controllers
+
+  [ Ronny Standtke ]
+  * [e6915c] Use empty user password per default
+
+ -- Gaudenz Steinlin <gaudenz@debian.org>  Thu, 28 May 2015 15:10:07 +0200
+
 live-config (5.0~a3-1) unstable; urgency=low
 
   * Making noroot bootparameter selfcontained within components.
