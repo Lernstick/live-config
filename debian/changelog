@@ -1,3 +1,9 @@
+live-config (5.0~a3-1+lernstick2) lernstick-8; urgency=medium
+
+  * [5589] fixed 1140-xserver-xorg (variables in Detect_xorg_driver())
+
+ -- Ronny Standtke <ronny.standtke@gmx.net>  Thu, 18 Jun 2015 16:04:44 +0200
+
 live-config (5.0~a3-1+lernstick1) lernstick-8; urgency=medium
 
   [ Gaudenz Steinlin ]
