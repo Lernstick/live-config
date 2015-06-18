@@ -14,7 +14,7 @@ Detect_xorg_driver ()
 	# without lspci this won't work
 	if ! [ -x /usr/bin/lspci ]
 	then
-		echo "xorg-autoconfig"
+		LIVE_XORG_DRIVER="xorg-autoconfig"
 		return
 	fi
 
@@ -22,7 +22,7 @@ Detect_xorg_driver ()
 	# Therefore skip dirver selction if more than one Display controller is detected (last condition).
 	if [ $(lspci -mn | awk '{ gsub ("\"",""); { print $2 } }' | grep -c ^03) -ne 1 ]
 	then
-		echo "xorg-autoconfig"
+		LIVE_XORG_DRIVER="xorg-autoconfig"
 		return
 	fi
 
@@ -32,7 +32,7 @@ Detect_xorg_driver ()
 	# no PCI device found, hope the xorg autoconfiguration will figure it out
 	if [ -z "${_DEVICE}" ]
 	then
-		echo "xorg-autoconfig"
+		LIVE_XORG_DRIVER="xorg-autoconfig"
 		return
 	fi
 
@@ -45,7 +45,7 @@ Detect_xorg_driver ()
 			then
 				if grep -qs "${_DEVICE}" "${_OVERRIDE_IDS}"
 				then
-					echo "$(basename ${_OVERRIDE_IDS} .ids)"
+					LIVE_XORG_DRIVER="$(basename ${_OVERRIDE_IDS} .ids)"
 					return
 				fi
 			fi
@@ -55,7 +55,7 @@ Detect_xorg_driver ()
 	# xorg-driver automatic override for virtualbox
 	if [ -e /var/lib/dpkg/info/virtualbox-guest-x11.list ] && echo "${_DEVICE}" | grep -qs '^80EEBEEF'
 	then
-		echo "vboxvideo"
+		LIVE_XORG_DRIVER="vboxvideo"
 		return
 	fi
 
@@ -64,7 +64,7 @@ Detect_xorg_driver ()
 	then
 		if grep -qs "${_DEVICE}" /usr/share/fglrx/fglrx.ids
 		then
-			echo "fglrx"
+			LIVE_XORG_DRIVER="fglrx"
 			return
 		fi
 	fi
@@ -80,7 +80,7 @@ Detect_xorg_driver ()
 				then
 					_NVIDIA_VERSION="$(basename $(dirname ${_NVIDIA_IDS}))"
 					_NVIDIA_MODULE="$(echo nvidia-${_NVIDIA_VERSION} | sed -e 's|-current$||')"
-					echo "nvidia"
+					LIVE_XORG_DRIVER="nvidia"
 					return
 				fi
 			fi
@@ -89,7 +89,7 @@ Detect_xorg_driver ()
 	fi
 
 	# fall back to xorg autoconfiguration
-	echo "xorg-autoconfig"
+	LIVE_XORG_DRIVER="xorg-autoconfig"
 }
 
 Cmdline ()
@@ -176,7 +176,7 @@ Config ()
 
 	if [ -z "${LIVE_XORG_DRIVER}" ]
 	then
-		LIVE_XORG_DRIVER=$(Detect_xorg_driver)
+		Detect_xorg_driver
 	fi
 
 	mkdir -p /etc/X11/xorg.conf.d
