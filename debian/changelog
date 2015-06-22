@@ -1,3 +1,10 @@
+live-config (5.0~a3-1+lernstick3) lernstick-8; urgency=medium
+
+  [ Ronny Standtke ]
+  * [32de] simplified 0050-locales (execute always, do not generate locales - we already generate them during build time...)
+
+ -- Ronny Standtke <ronny.standtke@fhnw.ch>  Mon, 22 Jun 2015 17:38:03 +0200
+
 live-config (5.0~a3-1+lernstick2) lernstick-8; urgency=medium
 
   * [5589] fixed 1140-xserver-xorg (variables in Detect_xorg_driver())
