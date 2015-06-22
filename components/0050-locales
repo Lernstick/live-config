@@ -25,13 +25,6 @@ Cmdline ()
 
 Init ()
 {
-	# Checking if package is installed or already configured
-	if [ ! -e /var/lib/dpkg/info/locales.list ] || \
-	   [ -e /var/lib/live/config/locales ]
-	then
-		exit 0
-	fi
-
 	echo -n " locales"
 }
 
@@ -41,29 +34,12 @@ Config ()
 	then
 		# multiple locales specified
 		_LOCALE="$(echo ${LIVE_LOCALES} | sed -e 's|,.*||')"
-		_LOCALES="$(echo ${LIVE_LOCALES} | sed -e "s|^${_LOCALE},||" -e 's|,| |g')"
 	else
 		# one or no locale specified
 		_LOCALE="${LIVE_LOCALES:-en_US.UTF-8}"
-		_LOCALES=""
 	fi
 
 	echo "LANG=${_LOCALE}" > /etc/default/locale
-
-	if [ -e /etc/locale.gen ]
-	then
-		for _LOCALE in ${_LOCALE} ${_LOCALES}
-		do
-			_CHARSET="$(echo ${_LOCALE} | awk -F. '{ print $2 }')"
-
-			sed -i -e "s|# ${_LOCALE} ${_CHARSET}|${_LOCALE} ${_CHARSET}|" /etc/locale.gen
-		done
-	fi
-
-	locale-gen --keep-existing > /dev/null 2>&1
-
-	# Creating state file
-	touch /var/lib/live/config/locales
 }
 
 Cmdline
